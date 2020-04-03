@@ -1,0 +1,17 @@
+<%- include("partials/twitch/twitchChannelHeader") -%>
+<%- include("partials/navbar") -%>
+
+
+<div class="container"> 
+    <div class="ratioPlayerContainer">
+        <iframe class="ratioPlayer"
+            src="https://player.twitch.tv/?channel=<%= channel %>"
+            frameborder="0"
+            scrolling="no"
+            allowfullscreen="true">
+        ></iframe>        
+    </div>
+</div>
+
+
+<%- include("partials/vidFooter") -%>

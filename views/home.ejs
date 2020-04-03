@@ -1,0 +1,32 @@
+    <%- include('partials/genericHeader'); -%>
+
+    <div class="container" id="containerHome">
+        <div class="row mt-4 justify-content-center">
+            <div class="col text-center w-50">
+                <h1><a href="/">Layluh</a></h1>    
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col text-center w-50">
+                <p id="pHome">Watch videos and livestreams without distractions</p>  
+            </div>
+        </div>
+
+        <form action="/loading" method="GET">
+            <div class="form-row justify-content-center">
+                <div class="search col-md-offset-6 w-75">
+                    <input type="text" name="URL" placeholder="Enter Youtube, Twitch, Vimeo or BitChute URL" class="searchTerm">
+                    <button type="submit" class="searchButton">
+                        <i class="fa fa-arrow-right"></i>
+                    </button>     
+                </div>  
+            </div>
+
+         </form>                 
+        
+    </div>
+
+    <%- include('partials/genericFooter'); -%>    
+
+
+

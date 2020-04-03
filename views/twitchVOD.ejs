@@ -1,0 +1,17 @@
+<%- include("partials/twitch/twitchVODHeader") -%>
+<%- include("partials/navbar") -%>
+
+
+<div class="container"> 
+    <div class="ratioPlayerContainer">
+        <iframe class="ratioPlayer"
+            src="https://player.twitch.tv/?video=<%= videoID %>"
+            frameborder="0"
+            scrolling="no"
+            allowfullscreen="true">
+        ></iframe>        
+    </div>
+</div>
+
+
+<%- include("partials/vidFooter") -%>
