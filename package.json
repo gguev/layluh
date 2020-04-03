@@ -1,0 +1,23 @@
+{
+  "name": "layluh",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "cheerio": "^1.0.0-rc.3",
+    "compression": "^1.7.4",
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "googleapis": "^47.0.0",
+    "plyr": "^3.5.6",
+    "serve-favicon": "^2.5.0",
+    "vimeo": "^2.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Guillermo Guevara",
+  "license": "ISC"
+}
