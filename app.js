@@ -1,18 +1,19 @@
+const express = require('express');
+const app = express();
+var compression = require('compression');
+app.use(compression());
+
 /* APP VARIABLES */
 const G_API_KEY = 'AIzaSyAOzl6ucfX2CX5F5v_hycLx3HJCw5lZifA';
 
-const T_API_KEY = 'pogovil2vx8j5a416wsxainjl47rbx';
+const T_CLIENT_ID = 'pogovil2vx8j5a416wsxainjl47rbx';
+const T_CLIENT_SECRET = '7xbojvtivgi3w4hpnf9t47y4796dm9';
 
 const V_API_KEY = '2de0245d14ff8e7115c90072c81ea32452e3a2a2';
 const V_CLIENT_SECRET = 'COIAqWTIywlmU1Rrl2jiwLlYeyf3DMvv24zTuX0/PbIQspi4+UXPmilZ+57htqLWHCqa2bpADSEWL/8/5JT+bgj044L9MRiGYAVSzM9tvU6gmzOKTTKNwzLO5rX1Anct';
 const V_ACCESS_TOKEN = '55df03b15c52953a198c5c556fd09e9d';
 
-const express = require('express');
-const app = express();
 var path = require('path');
-
-var compression = require('compression');
-app.use(compression());
 
 var favicon = require('serve-favicon')
 app.use(favicon(path.join(__dirname, 'public', 'images/favicon.ico')));
@@ -20,18 +21,22 @@ app.use(favicon(path.join(__dirname, 'public', 'images/favicon.ico')));
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-
 var Vimeo = require('vimeo').Vimeo;
 var vimeoClient = new Vimeo(V_API_KEY, V_CLIENT_SECRET, V_ACCESS_TOKEN);
-
 
 const {google} = require('googleapis');
 var gapi = google.youtube('v3');
 
+const idTwitch = axios.create({
+  baseURL: 'https://id.twitch.tv/oauth2/token?client_id=' + T_CLIENT_ID + '&client_secret=' + T_CLIENT_SECRET + '&grant_type=client_credentials'
+})
 
 const helix = axios.create({
   baseURL: 'https://api.twitch.tv/helix/',
-  headers: {'Client-ID': T_API_KEY}
+  headers: {
+    'Authorization': 'Bearer gr98zdkftn7rg39j5gxt79encuj5x3',
+    'Client-ID': T_CLIENT_ID
+  }
 });
 
 const bitchute = axios.create({
@@ -46,7 +51,6 @@ const baseURL = "http://127.0.0.1:5500";
 app.use(express.static('public'))
 app.set('view engine', 'ejs');
 
-
 /*
  *
  * INDEX
@@ -57,11 +61,10 @@ app.get('/', function(req, res) {
     res.render("home")
 });
 
-/* Features: How to use it, whats included, etc. */
+// Features: How to use it, whats included, etc.
 app.get("/features", function(req, res) {
   res.render("features");
 });
-
 
 // About page
 app.get("/about", function(req, res) {
@@ -121,7 +124,6 @@ app.get("/watch", function(req, res) {
       })
 })
 
-
 /*
  *
  * VIMEO
@@ -142,7 +144,6 @@ app.get("/:videoID([0-9]+$)", function(req, res) {
     }
   });
 });
-
 
 /*
  *
@@ -169,7 +170,6 @@ app.get("/videos/:videoID", function(req, res) {
       res.render("badLink");
     });
 });
-
 
 /*
  *
