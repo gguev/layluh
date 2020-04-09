@@ -61,9 +61,14 @@ app.get('/', function(req, res) {
     res.render("home")
 });
 
-// Features: How to use it, whats included, etc.
+// Features page
 app.get("/features", function(req, res) {
   res.render("features");
+});
+
+// Donation page
+app.get("/donate", function(req, res) {
+  res.render("donate");
 });
 
 // About page
@@ -79,15 +84,11 @@ app.get('/loading', function(req, res) {
     splitURL = fullURL.split('com');
     vidURL = splitURL[1];
 
-    console.log(baseURL + vidURL);
-
     res.redirect(baseURL + vidURL);   
   }
   else if (fullURL.includes('twitch.tv')) {
     splitURL = fullURL.split('tv');
     vidURL = splitURL[1];
-    
-    console.log(baseURL + vidURL);
 
     res.redirect(baseURL + vidURL);
 
