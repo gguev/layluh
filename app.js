@@ -46,7 +46,7 @@ const bitchute = axios.create({
 const IP = process.env.IP || "127.0.0.1";
 const PORT = process.env.PORT || 5500;
 
-const baseURL = "https://layluh.com";
+const baseURL = "http://127.0.0.1:5500";
 
 app.use(express.static('public'))
 app.set('view engine', 'ejs');
