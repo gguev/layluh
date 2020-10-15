@@ -17,6 +17,7 @@ var path = require('path');
 
 var favicon = require('serve-favicon')
 app.use(favicon(path.join(__dirname, 'public', 'images/favicon.ico')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const axios = require('axios');
 const cheerio = require('cheerio');
@@ -34,7 +35,7 @@ const idTwitch = axios.create({
 const helix = axios.create({
   baseURL: 'https://api.twitch.tv/helix/',
   headers: {
-    'Authorization': 'Bearer gr98zdkftn7rg39j5gxt79encuj5x3',
+    'Authorization': 'Bearer hebaa6exndcec8g0o93hiyz8kk1ph9',
     'Client-ID': T_CLIENT_ID
   }
 });
@@ -43,12 +44,15 @@ const bitchute = axios.create({
   baseURL: 'https://bitchute.com/video/',
 });
 
+const { YTSearcher } = require('ytsearcher');
+const searcher = new YTSearcher(G_API_KEY);
+
+
 const IP = process.env.IP || "127.0.0.1";
 const PORT = process.env.PORT || 5500;
 
 const baseURL = "http://127.0.0.1:5500";
 
-app.use(express.static('public'))
 app.set('view engine', 'ejs');
 
 /*
@@ -58,6 +62,11 @@ app.set('view engine', 'ejs');
 */
 // Home 
 app.get('/', function(req, res) {
+    // //uncomment to get bearer tokens
+    // idTwitch.post().then((response) => {
+    //   console.log(response)
+    // })
+
     res.render("home")
 });
 
@@ -91,13 +100,43 @@ app.get('/loading', function(req, res) {
     vidURL = splitURL[1];
 
     res.redirect(baseURL + vidURL);
-
+  }
+  // YOUTUBE EMBED SUPPORT
+  else if (fullURL.includes('youtu.be')) {
+    splitURL = fullURL.split('be/');
+    vidURL = splitURL[1];
+    res.redirect(baseURL + '/watch?v=' + vidURL);
+  
   } else {
     res.render("badLink");
   }  
 
 });
 
+// Layluh prepend
+app.get('/:URL(http*)', function(req, res) {
+  var paramURL = req.params.URL;
+
+  if (paramURL.includes("youtube.com")) {
+    var queryURL = req.query.v;
+    var watchURL = "/watch?v=" + queryURL;
+    res.redirect(baseURL + watchURL);    
+  }
+  else if (paramURL.includes("vimeo.com") || paramURL.includes("bitchute.com")) {
+    splitURL = paramURL.split('com');
+    vidURL = splitURL[1];
+    res.redirect(baseURL + vidURL); 
+  }
+  else if (paramURL.includes("twitch.tv")) {
+    splitURL = paramURL.split('tv');
+    vidURL = splitURL[1];
+
+    res.redirect(baseURL + vidURL);
+  }
+  else {
+    res.render("badLink");
+  }
+});
 
 /*
  *
@@ -105,6 +144,35 @@ app.get('/loading', function(req, res) {
  * 
 */
 // Watch : takes to YT video
+app.get("/results", function(req, res) {
+
+    (async () => {
+      let query = req.query.search;
+      let videos = [];
+     
+      const searchResults = await searcher.search(query, {type: 'video'});
+      let page1 = [...searchResults.currentPage];
+      console.log(page1)
+
+      const searchResults2 = await searchResults.nextPage();
+      let page2 = [...searchResults2.currentPage];
+      console.log(page2)
+      
+      const searchResults3 = await searchResults2.nextPage();
+      let page3 = [...searchResults3.currentPage];
+      console.log(page3)
+
+      videos = [...page1, ...page2, ...page3]
+
+      res.render('results', { query: query, videos: videos })
+    })();
+    
+
+    
+  })
+  
+
+
 app.get("/watch", function(req, res) {
     var videoID = req.query.v;
 
