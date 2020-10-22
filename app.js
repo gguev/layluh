@@ -149,26 +149,33 @@ app.get("/results", function(req, res) {
     (async () => {
       let query = req.query.search;
       let videos = [];
-     
-      const searchResults = await searcher.search(query, {type: 'video'});
-      let page1 = [...searchResults.currentPage];
-      console.log(page1)
-
-      const searchResults2 = await searchResults.nextPage();
-      let page2 = [...searchResults2.currentPage];
-      console.log(page2)
       
-      const searchResults3 = await searchResults2.nextPage();
-      let page3 = [...searchResults3.currentPage];
-      console.log(page3)
+      try {
+        const searchResults = await searcher.search(query, {type: 'video'});
+        let page1 = [...searchResults.currentPage];
 
-      videos = [...page1, ...page2, ...page3]
+        const searchResults2 = await searchResults.nextPage();
+        let page2 = [...searchResults2.currentPage];
+        
+        const searchResults3 = await searchResults2.nextPage();
+        let page3 = [...searchResults3.currentPage];
 
-      res.render('results', { query: query, videos: videos })
+        videos = [...page1, ...page2, ...page3]
+
+        res.render('results', { query: query, videos: videos })  
+      } catch (error) {
+        if (error.toString().includes("null")) {
+          res.render("resultsError", { query: query })
+        } else if (error.toString().includes("403")) {
+          res.render('quotaError')
+        } else {
+          res.render('genericError')
+        }
+        
+      }
+      
     })();
-    
-
-    
+     
   })
   
 
@@ -188,8 +195,14 @@ app.get("/watch", function(req, res) {
       } else {
         res.render("youtube", {video: video, videoID: videoID});  
       }
-      }).catch(function () {
-        res.render("badLink");
+      }).catch(function (error) {
+        if (error.toString().includes("null")) {
+          res.render("resultsError", { query: query })
+        } else if (error.toString().includes("403")) {
+          res.render('quotaError')
+        } else {
+          res.render('genericError')
+        }
       })
 })
 
@@ -270,7 +283,7 @@ app.get("/video/:videoID/", function(req, res) {
  * 
 */
 app.get('*', function(req, res){
-  res.render("badLink");
+  res.render("genericError");
 });
 
 
