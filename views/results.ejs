@@ -4,13 +4,20 @@
 <div class="container mt-3">
   <h3>Results for "<%- query -%>"</h3>
 
+  <% streams.forEach(stream => { %>
+    <div class="my-5">
+      <h4><a href="https://www.layluh.com/watch?v=<%- stream.id -%>"><%- stream.title -%></a></h4>  
+      <%  %>
+      <p><%- stream.channel.name -%> - <%- stream.watching -%> watching</p>
+    </div>
+  <% }) %>
+
   <% videos.forEach(video => { %>
     <div class="my-5">
       <h4><a href="https://www.layluh.com/watch?v=<%- video.id -%>"><%- video.title -%></a></h4>  
-      <% let date = video.publishedAt.toLocaleDateString() %>
-      <p><%- video.channelTitle -%> - <%- date -%></p>
+      <%  %>
+      <p><%- video.channel.name -%> - <%- video.uploaded -%></p>
     </div>
-
   <% }) %>
 </div>
 

@@ -45,8 +45,10 @@ const bitchute = axios.create({
 });
 
 const { YTSearcher } = require('ytsearcher');
+const ytsearcher = require('ytsearcher');
 const searcher = new YTSearcher(G_API_KEY);
 
+const youtube = require('scrape-youtube').default;
 
 const IP = process.env.IP || "127.0.0.1";
 const PORT = process.env.PORT || 5500;
@@ -87,30 +89,36 @@ app.get("/about", function(req, res) {
 
 // Loading: Redirects to relevant path
 app.get('/loading', function(req, res) {
-  var fullURL = req.query.URL;
-  
-  if (fullURL.includes("youtube.com") || fullURL.includes("vimeo.com") || fullURL.includes("bitchute.com")) {
-    splitURL = fullURL.split('com');
-    vidURL = splitURL[1];
 
-    res.redirect(baseURL + vidURL);   
-  }
-  else if (fullURL.includes('twitch.tv')) {
-    splitURL = fullURL.split('tv');
-    vidURL = splitURL[1];
+  const term = req.query.term
+  if (term.includes(".com") || term.includes(".tv") || term.includes('.be')) {
+    let fullURL = term;
 
-    res.redirect(baseURL + vidURL);
-  }
-  // YOUTUBE EMBED SUPPORT
-  else if (fullURL.includes('youtu.be')) {
-    splitURL = fullURL.split('be/');
-    vidURL = splitURL[1];
-    res.redirect(baseURL + '/watch?v=' + vidURL);
+    if (fullURL.includes("youtube.com") || fullURL.includes("vimeo.com") || fullURL.includes("bitchute.com")) {
+      splitURL = fullURL.split('com');
+      vidURL = splitURL[1];
   
+      res.redirect(baseURL + vidURL);   
+    }
+    else if (fullURL.includes('twitch.tv')) {
+      splitURL = fullURL.split('tv');
+      vidURL = splitURL[1];
+  
+      res.redirect(baseURL + vidURL);
+    }
+    else if (fullURL.includes('youtu.be') || fullURL.includes('Youtu.be')) {
+      splitURL = fullURL.split('be/');
+      vidURL = splitURL[1];
+      res.redirect(baseURL + '/watch?v=' + vidURL);
+    
+    } else {
+      res.render("badLink");
+    }  
   } else {
-    res.render("badLink");
-  }  
-
+    let query = term;
+    let cleanedQuery = query.replace(/\s/g, '+')
+    res.redirect('/results?search=' + cleanedQuery)
+  }
 });
 
 // Layluh prepend
@@ -143,43 +151,65 @@ app.get('/:URL(http*)', function(req, res) {
  * YOUTUBE
  * 
 */
-// Watch : takes to YT video
+// Results: fetch results
 app.get("/results", function(req, res) {
-
-    (async () => {
-      let query = req.query.search;
-      let videos = [];
+  // scrape-youtube: ok, not great
+  // usetube: havent tested, might use later for getting vids from channels
+  
+    // (async () => {
+    //   let query = req.query.search;
+    //   let videos = [];
       
-      try {
-        const searchResults = await searcher.search(query, {type: 'video'});
-        let page1 = [...searchResults.currentPage];
+    //   try {
+    //     const searchResults = await searcher.search(query, {type: 'video'});
+    //     let page1 = [...searchResults.currentPage];
 
-        const searchResults2 = await searchResults.nextPage();
-        let page2 = [...searchResults2.currentPage];
+    //     const searchResults2 = await searchResults.nextPage();
+    //     let page2 = [...searchResults2.currentPage];
         
-        const searchResults3 = await searchResults2.nextPage();
-        let page3 = [...searchResults3.currentPage];
+    //     const searchResults3 = await searchResults2.nextPage();
+    //     let page3 = [...searchResults3.currentPage];
 
-        videos = [...page1, ...page2, ...page3]
+    //     videos = [...page1, ...page2, ...page3]
 
-        res.render('results', { query: query, videos: videos })  
-      } catch (error) {
-        if (error.toString().includes("null")) {
-          res.render("resultsError", { query: query })
-        } else if (error.toString().includes("403")) {
-          res.render('quotaError')
-        } else {
-          res.render('genericError')
-        }
+    //     res.render('results', { query: query, videos: videos })  
+    //   } catch (error) {
+    //     if (error.toString().includes("null")) {
+    //       res.render("resultsError", { query: query })
+    //     } else if (error.toString().includes("403")) {
+    //       res.render('quotaError')
+    //     } else {
+    //       res.render('genericError')
+    //     }
         
+    //   }
+      
+    // })();
+
+    let query = req.query.search;
+
+    youtube.search(query, { type: 'any' })
+    .then(results => {
+      let streams = results.streams
+      let videos = results.videos
+
+      if (streams.length == 0 && videos.length == 0) {
+        res.render('resultsError.ejs', { query: query })
+      } else {
+        res.render('results', { query: query, streams: streams, videos: videos });
       }
-      
-    })();
-     
+    })
+    .catch(error => {
+      if (error.toString().includes("403")) {
+        res.render('quotaError')
+      } else {
+        res.render('genericError');
+      }
+     });     
   })
   
 
-
+// Watch: takes to YT video
 app.get("/watch", function(req, res) {
     var videoID = req.query.v;
 
