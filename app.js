@@ -200,6 +200,7 @@ app.get("/results", function(req, res) {
       }
     })
     .catch(error => {
+      console.log(error)
       if (error.toString().includes("403")) {
         res.render('quotaError')
       } else {
