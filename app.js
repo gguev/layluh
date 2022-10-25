@@ -4,14 +4,14 @@ var compression = require('compression');
 app.use(compression());
 
 /* APP VARIABLES */
-const G_API_KEY = 'AIzaSyAOzl6ucfX2CX5F5v_hycLx3HJCw5lZifA';
+const G_API_KEY = // replace with your Google credentials
 
-const T_CLIENT_ID = 'pogovil2vx8j5a416wsxainjl47rbx';
-const T_CLIENT_SECRET = '7xbojvtivgi3w4hpnf9t47y4796dm9';
+const T_CLIENT_ID = // replace with your Twitch credentials
+const T_CLIENT_SECRET = // replace with your Twitch credentials
 
-const V_API_KEY = '2de0245d14ff8e7115c90072c81ea32452e3a2a2';
-const V_CLIENT_SECRET = 'COIAqWTIywlmU1Rrl2jiwLlYeyf3DMvv24zTuX0/PbIQspi4+UXPmilZ+57htqLWHCqa2bpADSEWL/8/5JT+bgj044L9MRiGYAVSzM9tvU6gmzOKTTKNwzLO5rX1Anct';
-const V_ACCESS_TOKEN = '55df03b15c52953a198c5c556fd09e9d';
+const V_API_KEY = // replace with your Vimeo credentials
+const V_CLIENT_SECRET = // replace with your Vimeo credentials
+const V_ACCESS_TOKEN = // replace with your Vimeo credentials
 
 var path = require('path');
 
@@ -35,7 +35,7 @@ const idTwitch = axios.create({
 const helix = axios.create({
   baseURL: 'https://api.twitch.tv/helix/',
   headers: {
-    'Authorization': 'Bearer hebaa6exndcec8g0o93hiyz8kk1ph9',
+    'Authorization': // replace with your Twitch credentials,
     'Client-ID': T_CLIENT_ID
   }
 });
