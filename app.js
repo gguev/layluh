@@ -156,77 +156,24 @@ app.get("/results", function(req, res) {
   // scrape-youtube: ok, not great
   // usetube: havent tested, might use later for getting vids from channels
   
-    // (async () => {
-    //   let query = req.query.search;
-    //   let videos = [];
+    (async () => {
+      let query = req.query.search;
+      let videos = [];
       
-    //   try {
-    //     const searchResults = await searcher.search(query, {type: 'video'});
-    //     let page1 = [...searchResults.currentPage];
-
-    //     const searchResults2 = await searchResults.nextPage();
-    //     let page2 = [...searchResults2.currentPage];
+      try {
+        const searchResults = await searcher.search(query, {type: 'video'});
+        let page1 = [...searchResults.currentPage];
+        console.log(page1)
+        const searchResults2 = await searchResults.nextPage();
+        let page2 = [...searchResults2.currentPage];
         
-    //     const searchResults3 = await searchResults2.nextPage();
-    //     let page3 = [...searchResults3.currentPage];
+        const searchResults3 = await searchResults2.nextPage();
+        let page3 = [...searchResults3.currentPage];
 
-    //     videos = [...page1, ...page2, ...page3]
+        videos = [...page1, ...page2, ...page3]
 
-    //     res.render('results', { query: query, videos: videos })  
-    //   } catch (error) {
-    //     if (error.toString().includes("null")) {
-    //       res.render("resultsError", { query: query })
-    //     } else if (error.toString().includes("403")) {
-    //       res.render('quotaError')
-    //     } else {
-    //       res.render('genericError')
-    //     }
-        
-    //   }
-      
-    // })();
-
-    let query = req.query.search;
-
-    youtube.search(query, { type: 'any' })
-    .then(results => {
-      let streams = results.streams
-      let videos = results.videos
-
-      if (streams.length == 0 && videos.length == 0) {
-        res.render('resultsError.ejs', { query: query })
-      } else {
-        res.render('results', { query: query, streams: streams, videos: videos });
-      }
-    })
-    .catch(error => {
-      console.log(error)
-      if (error.toString().includes("403")) {
-        res.render('quotaError')
-      } else {
-        res.render('genericError');
-      }
-     });     
-  })
-  
-
-// Watch: takes to YT video
-app.get("/watch", function(req, res) {
-    var videoID = req.query.v;
-
-    gapi.videos.list({
-      auth: G_API_KEY,
-      part: "snippet",
-      id: videoID
-    }).then(function(response) {
-      var video = response.data.items;
-      
-      if (video[0].snippet == undefined) {
-        res.render("badLink")
-      } else {
-        res.render("youtube", {video: video, videoID: videoID});  
-      }
-      }).catch(function (error) {
+        res.render('apiResults', { query: query, videos: videos })  
+      } catch (error) {
         if (error.toString().includes("null")) {
           res.render("resultsError", { query: query })
         } else if (error.toString().includes("403")) {
@@ -234,28 +181,81 @@ app.get("/watch", function(req, res) {
         } else {
           res.render('genericError')
         }
-      })
-})
+        
+      }
+      
+    })();
 
-/*
- *
- * VIMEO
- * 
-*/
-// Videos: takes to Vimeo video
-app.get("/:videoID([0-9]+$)", function(req, res) {
-  var videoID = req.params.videoID;
+//     let query = req.query.search;
+
+//     youtube.search(query, { type: 'any' })
+//     .then(results => {
+//       let streams = results.streams
+//       let videos = results.videos
+
+//       if (streams.length == 0 && videos.length == 0) {
+//         res.render('resultsError.ejs', { query: query })
+//       } else {
+//         res.render('scrapeResults', { query: query, streams: streams, videos: videos });
+//       }
+//     })
+//     .catch(error => {
+//       console.log(error)
+//       if (error.toString().includes("403")) {
+//         res.render('quotaError')
+//       } else {
+//         res.render('genericError');
+//       }
+//      });     
+//   })
   
-  vimeoClient.request({
-    path: '/videos/' + videoID, 
-  }, function (error, body, statusCode, headers) {
-    if (error) {
-      res.render("badLink");
-    } else {
-      var videoTitle = body.name;
-      res.render("vimeo", {videoID: videoID, videoTitle});
-    }
-  });
+
+// // Watch: takes to YT video
+// app.get("/watch", function(req, res) {
+//     var videoID = req.query.v;
+
+//     gapi.videos.list({
+//       auth: G_API_KEY,
+//       part: "snippet",
+//       id: videoID
+//     }).then(function(response) {
+//       var video = response.data.items;
+      
+//       if (video[0].snippet == undefined) {
+//         res.render("badLink")
+//       } else {
+//         res.render("youtube", {video: video, videoID: videoID});  
+//       }
+//       }).catch(function (error) {
+//         if (error.toString().includes("null")) {
+//           res.render("resultsError", { query: query })
+//         } else if (error.toString().includes("403")) {
+//           res.render('quotaError')
+//         } else {
+//           res.render('genericError')
+//         }
+//       })
+// })
+
+// /*
+//  *
+//  * VIMEO
+//  * 
+// */
+// // Videos: takes to Vimeo video
+// app.get("/:videoID([0-9]+$)", function(req, res) {
+//   var videoID = req.params.videoID;
+  
+//   vimeoClient.request({
+//     path: '/videos/' + videoID, 
+//   }, function (error, body, statusCode, headers) {
+//     if (error) {
+//       res.render("badLink");
+//     } else {
+//       var videoTitle = body.name;
+//       res.render("vimeo", {videoID: videoID, videoTitle});
+//     }
+//   });
 });
 
 /*
