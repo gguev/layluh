@@ -6,9 +6,9 @@ Layluh is a minimalist frontend alternative to YouTube, Twitch, and Vimeo. This 
 
 -   [Node.js](https://nodejs.org/en/)
 -   [JavaScript](https://www.javascript.com/)
--   [Bootstrap 4](https://getbootstrap.com/docs/4.0/getting-started/introduction/)
 -   [EJS](https://ejs.co/)
-
+-   [Bootstrap 4](https://getbootstrap.com/docs/4.0/getting-started/introduction/)
+-   
 ## Development
 
 ```bash
